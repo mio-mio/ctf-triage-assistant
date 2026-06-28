@@ -1,8 +1,0 @@
-This is a sample challenge file.
-
-Most of this file is just normal text.
-The flag is hidden here:
-
-triage_test{sample_flag_for_testing}
-
-Good Luck!
