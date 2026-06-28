@@ -1,1 +1,4 @@
+Title: Sample Challenge
+Category: misc
+
 I found this strange text file. Can you find the flag?
