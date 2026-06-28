@@ -1,8 +1,7 @@
 # CTF Triage Assistant
-An experimental CLI tool for initial CTF challenge inspection　and reproducible Markdown reporting.
+An experimental small CLI tool for initial CTF challenge inspection.
 
-This project is a learning-focused tool that helps automate repetitive first-look checks during CTF practice. 
-It scans a challenge folder, collects basic file information, extracts readable strings, searches for flag-like patterns, and generatees a reproducible Markdown analysis report.
+This project is a learning-focused tool that helps automate repetitive first-look checks during CTF practice. It scans a challenge folder, collects basic file information, extracts readable strings, searches for flag-like patterns, and generatees a reproducible Markdown analysis report.
 
 
 ## Goals
@@ -85,14 +84,15 @@ Report written to: reports/analysis.md
 ## Roadmap
 
 - [x] Lv1: Basic local triage
-- [ ] Lv2: LLM-assisted summary
-- [ ] Lv3: Human-in-the-loop command execution
-- [ ] Lv4: Optional challenge import workflow
+- [ ] Lv2: Broader local inspection
+- [ ] Lv3: Report improvements
+- [ ] Lv4: LLM-assisted summary
+- [ ] Lv5: Human-in-the-loop command execution
+- [ ] Lv6: Optional challenge import workflow
 
 
 ## Notes
 
 This project is intended for CTF practice, post-event review, and authorized learning environments.
 
-The first version intentionally keeps the workflow simple and interactive so each part of the code is easy to understand. 
-The tool is designed to support analysis, not replace human judgment.
+The first version intentionally keeps the workflow simple and interactive so each part of the code is easy to understand. The tool is designed to support analysis, not replace human judgment.
