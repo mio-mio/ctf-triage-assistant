@@ -11,7 +11,7 @@ This project is a learning-focused tool that helps automate repetitive first-loo
 
 ## Current Features
 
-### Lv1: Basic Local Triage
+### Lv1: Basic Local Inspection
 
 - Interactive challenge folder input
 - Read `description.txt`
