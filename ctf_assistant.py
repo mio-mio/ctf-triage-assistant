@@ -1,89 +1,172 @@
 import re
+import shutil
 import subprocess
 from pathlib import Path
+from datetime import datetime
 
+# Command Function
+def run_inspection_command(command_parts, target_path):
+    command_name = command_parts[0]
+
+    if shutil.which(command_name) is None:
+        return f"Error: {command_name} is not available."
+    
+    result = subprocess.run(
+        command_parts + [str(target_path)],
+        capture_output=True,
+        text=True
+    )
+
+    if result.returncode != 0:
+        return result.stderr or f"Error: {command_name} failed."
+    
+    return result.stdout
+
+# For Report Generation
+def report_command_result(command_name, target_result):
+    report = ""
+    report += f"## {command_name}\n\n"
+    report += "```text\n"
+    report += target_result.strip()
+    report += "\n```\n\n"
+    
+    return report
+
+# Challenge Folder Path Input
 challenge_dir_input = input("Challenge folder path: ")
 challenge_dir = Path(challenge_dir_input).expanduser()
+files_dir = challenge_dir / "files"
 
-if not challenge_dir.exists():
-    print(f"Error: Challenge folder not found: {challenge_dir}")
-    exit(1)
-
+# Description
 description_path = challenge_dir / "description.txt"
-path = challenge_dir / "files" / "challenge.txt"
 
-if not description_path.exists():
-    print(f"Error: description.txt not found: {description_path}")
-    exit(1)
-
-if not path.exists():
-    print(f"Error: challenge.txt not found: {path}")
-    exit(1)
-
-with open(path) as f:
-    text = f.read()
-
-with open(description_path) as f:
-    description = f.read()
-
-flag_candidates = re.findall(r"triage_test\{[^}]+\}", text)
-
-
-if flag_candidates:
-    print("Flag-like string found!")
-    print(flag_candidates)
+if description_path.exists():
+    with open(description_path) as f:
+        description = f.read()
 else:
-    print("No flag-like string found.")
+    description = "No description provided."
 
-
-file_result = subprocess.run(
-    ["file", str(path)],
-    capture_output=True,
-    text=True
-)
-
-print("[file result]")
-print(file_result.stdout)
-
-strings_result = subprocess.run(
-    ["strings", str(path)],
-    capture_output=True,
-    text=True
-)
-
-print("[strings result]")
-print(strings_result.stdout)
-
-report = "# Analysis Report\n\n"
+# Report
+report = ""
+report += "# Analysis Report\n\n"
 
 report += "## Description\n\n"
 report += "```text\n"
 report += description.strip()
 report += "\n```\n\n"
 
-report += "## Target File\n\n"
-report += f"`{path}`\n\n"
 
-report += "## Flag Candidates\n\n"
-if flag_candidates:
-    for flag in flag_candidates:
-        report += f"- `{flag}`\n"
-else:
-    report += "No flag-like strings found.\n"
-report += "\n"
+if not challenge_dir.exists():
+    print(f"Error: Challenge folder not found: {challenge_dir}\n")
+    exit(1)
 
-report += "## file Result\n\n"
-report += "```text\n"
-report += file_result.stdout.strip()
-report += "\n```\n\n"
+if not files_dir.exists():
+    print(f"Error: Files folder not found: {files_dir}\n")
+    exit(1)
 
-report += "## strings Result\n\n"
-report += "```text\n"
-report += strings_result.stdout.strip()
-report += "\n```\n"
+target_files = []
 
-output_path = Path("reports") / "analysis.md"
+for path in files_dir.iterdir():
+
+    if path.is_file():
+        target_files.append(path)
+
+if not target_files:
+    print("No files were found in the files folder.")
+    exit(1)
+
+
+# Inspect Files in Folder
+for target_file in target_files:
+   # CLI output
+    print("◎ Target File ◎")
+    print(target_file.name)
+    print("\n")
+
+    # Report output
+    report += "## Target File\n\n"
+    report += f"`{target_file.name}`\n\n"
+
+    file_result = run_inspection_command(["file"], target_file)
+    strings_result = run_inspection_command(["strings"], target_file)
+
+    # Find Flag-like String
+    flag_candidates = re.findall(r"triage_test\{[^}]+\}", strings_result)
+    # CLI output
+    if flag_candidates:
+        print(f"Flag-like string found in {target_file.name}!")
+        print(flag_candidates)
+        print("\n")
+
+    else:
+        print(f"No flag-like string found in {target_file.name}.")
+        print("\n")
+
+    # Report Continue
+    report += "## Flag Candidates\n\n"
+    if flag_candidates:
+        for flag in flag_candidates:
+            report += f"- `{flag}`\n"
+    else:
+        report += "No flag-like strings found.\n"
+    report += "\n"
+
+    # CLI output
+    print("[file_result]")
+    print(file_result)
+    print("\n")
+
+    # Report output
+    report += report_command_result("file", file_result)
+    report += report_command_result("strings", strings_result)
+
+    file_info = file_result.lower()
+    if "image" in file_info:
+        exiftool_result = run_inspection_command(["exiftool"], target_file)
+
+        # CLI output
+        print("[exiftool]")
+        print(exiftool_result)
+        print("\n")
+
+        # Report output
+        report += report_command_result("exiftool", exiftool_result)
+
+    elif "elf" in file_info:
+        readelf_result = run_inspection_command(["readelf", "-h"], target_file)
+        objdump_result = run_inspection_command(["objdump", "-f"], target_file)
+
+        # CLI output
+        print("[readelf -h]")
+        print(readelf_result)
+        print("\n")
+        
+        print("[objdump -f]")
+        print(objdump_result)
+        print("\n")
+
+        # Report output
+        report += report_command_result("readelf -h", readelf_result)
+        report += report_command_result("objdump", objdump_result)
+
+
+    elif "zip" in file_info:
+        unzip_v_result = run_inspection_command(["unzip", "-v"], target_file)
+
+        # CLI output
+        print("[unzip -v]")
+        print(unzip_v_result)
+        print("\n")
+
+        # Report output
+        report += report_command_result("unzip", unzip_v_result)
+
+report_dir = Path("reports")
+report_dir.mkdir(exist_ok=True)
+
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+report_time = f"{challenge_dir.name}_{timestamp}.md"
+output_path = report_dir / report_time
 output_path.write_text(report, encoding="utf-8")
 
 print(f"Report written to: {output_path}")
-
