@@ -22,6 +22,15 @@ This project is a learning-focused tool that helps automate repetitive first-loo
   - `strings`
 - Generate a Markdown analysis report
 
+### Lv2: Broader local inspection
+- Support multiple files under files/
+- Add file-type-aware inspection
+- Add reusable command execution function
+- Check whether external commands are available before running them
+- Improve error handling
+- Improve Analysis report file name
+- 
+
 ## Current Limitations
 
 - The current version analyzes one target file at `files/challenge.txt`.
@@ -51,14 +60,19 @@ examples/sample_challenge/
   description.txt
   files/
     challenge.txt
+    sample_code
+    image_with_flag.jpg
+    Letter_from_Lorem.txt
+    Letter_from_Lorem.txt.zip
 ```
 
-The tool generates a Markdown report at:
+The tool generates a Markdown report under:
 
 ```text
-reports/analysis.md
+reports/
 ```
-
+Report filenames include the challenge name and timestamp, for example:
+reports/sample_challenge_20260713__153003.md
 
 ## Example Output
 
@@ -84,7 +98,7 @@ Report written to: reports/analysis.md
 ## Roadmap
 
 - [x] Lv1: Basic local triage
-- [ ] Lv2: Broader local inspection
+- [x] Lv2: Broader local inspection
 - [ ] Lv3: Report improvements
 - [ ] Lv4: LLM-assisted summary
 - [ ] Lv5: Human-in-the-loop command execution
