@@ -1,12 +1,17 @@
 # CTF Triage Assistant
-An experimental small CLI tool for initial CTF challenge inspection.
 
-This project is a learning-focused tool that helps automate repetitive first-look checks during CTF practice. It scans a challenge folder, collects basic file information, extracts readable strings, searches for flag-like patterns, and generatees a reproducible Markdown analysis report.
+An experimental CLI tool for initial CTF challenge inspection.
 
+This project is a learning-focused tool that helps automate repetitive first-look checks during CTF practice. It scans a challenge folder, collects basic file information, extracts readable strings, searches for flag-like patterns, and generates a reproducible Markdown analysis report.
 
 ## Goals
+
 - Build a small human-in-the-loop security learning tool
-- Add LLM-assisted summarization and next-step suggestions (planned)
+- Gradually extend the tool with LLM-assisted summarization and human-in-the-loop workflows
+
+## Design Philosophy
+
+The project is developed incrementally. Each milestone focuses on a small, understandable improvement rather than building a fully autonomous solver from the beginning.
 
 
 ## Current Features
@@ -23,18 +28,30 @@ This project is a learning-focused tool that helps automate repetitive first-loo
 - Generate a Markdown analysis report
 
 ### Lv2: Broader local inspection
-- Support multiple files under files/
-- Add file-type-aware inspection
-- Add reusable command execution function
-- Check whether external commands are available before running them
-- Improve error handling
-- Improve Analysis report file name
-- 
+
+- Support multiple files under `files/`
+- Run file-type-aware inspection commands
+- Execute reusable inspection commands through a shared helper function
+- Check whether external commands are available before execution
+- Improve error handling for missing files and tools
+- Generate timestamped Markdown analysis reports
+
+### Inspection Commands
+
+The current version supports:
+- `file`
+- `strings`
+- `exiftool` *(image)*
+- `readelf -h` *(ELF)*
+- `objdump -f` *(ELF)*
+- `unzip -v` *(ZIP)*
 
 ## Current Limitations
 
-- The current version analyzes one target file at `files/challenge.txt`.
-- Multiple file support is planned for a future version.
+- The tool analyzes one challenge directory at a time.
+- Batch analysis of multiple challenge directories is not yet supported.
+- File-type-aware inspection currently relies on simple matching against `file` command output.
+- Optional inspection commands must be installed separately.
 - The tool does not submit flags or interact with CTF platforms.
 - The current version uses interactive input instead of command-line arguments.
 
@@ -66,47 +83,30 @@ examples/sample_challenge/
     Letter_from_Lorem.txt.zip
 ```
 
-The tool generates a Markdown report under:
+Report filenames include the challenge name and timestamp, for example:
 
 ```text
-reports/
+reports/sample_challenge_20260713_153003.md
 ```
-Report filenames include the challenge name and timestamp, for example:
-reports/sample_challenge_20260713__153003.md
 
 ## Example Output
 
-```text
-Challenge folder path: examples/sample_challenge
-Flag-like string found!
-['triage_test{sample_flag_for_testing}']
+A sample generated report is available at:
 
-[file result]
-examples/sample_challenge/files/challenge.txt: ASCII text
-
-[strings result]
-This is a sample challenge file.
-Most of this file is just normal text.
-The flag is hidden here:
-triage_test{sample_flag_for_testing}
-Good Luck!
-
-Report written to: reports/analysis.md
-```
-
+`reports/sample_report.md`
 
 ## Roadmap
 
 - [x] Lv1: Basic local triage
 - [x] Lv2: Broader local inspection
-- [ ] Lv3: Report improvements
+- [ ] Lv3: Report and challenge metadata improvements
 - [ ] Lv4: LLM-assisted summary
 - [ ] Lv5: Human-in-the-loop command execution
 - [ ] Lv6: Optional challenge import workflow
-
+- [ ] Lv7: Batch challenge analysis
 
 ## Notes
 
 This project is intended for CTF practice, post-event review, and authorized learning environments.
 
-The first version intentionally keeps the workflow simple and interactive so each part of the code is easy to understand. The tool is designed to support analysis, not replace human judgment.
+The project intentionally keeps the workflow simple and interactive so the implementation remains easy to understand while new features are added incrementally. The tool is designed to support analysis, not replace human judgment.
