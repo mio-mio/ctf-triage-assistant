@@ -36,6 +36,15 @@ The project is developed incrementally. Each milestone focuses on a small, under
 - Improve error handling for missing files and tools
 - Generate timestamped Markdown analysis reports
 
+### Lv3: eport and Challenge Metadata Improvements
+- Include challenge metadata and description in the Markdown report
+- Store command execution results with separate status and text fields
+- Display command execution status in the report
+- Remove duplicate flag candidates while preserving different candidates
+- Skip missing or invalid metadata without stopping the analysis
+- Generate challenge-level report sections through a reusable report function
+- Optionally include challenge information from `metadata.json` in reports
+
 ### Inspection Commands
 
 The current version supports:
@@ -49,9 +58,8 @@ The current version supports:
 ## Current Limitations
 
 - The tool analyzes one challenge directory at a time.
-- Batch analysis of multiple challenge directories is not yet supported.
 - File-type-aware inspection currently relies on simple matching against `file` command output.
-- Optional inspection commands must be installed separately.
+- Optional inspection tools must be installed separately.
 - The tool does not submit flags or interact with CTF platforms.
 - The current version uses interactive input instead of command-line arguments.
 
@@ -99,7 +107,7 @@ A sample generated report is available at:
 
 - [x] Lv1: Basic local triage
 - [x] Lv2: Broader local inspection
-- [ ] Lv3: Report and challenge metadata improvements
+- [x] Lv3: Report and challenge metadata improvements
 - [ ] Lv4: LLM-assisted summary
 - [ ] Lv5: Human-in-the-loop command execution
 - [ ] Lv6: Optional challenge import workflow
